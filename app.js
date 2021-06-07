@@ -10,14 +10,22 @@ require('dotenv').config()
 
 var app = express();
 
-const mongoURI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_URL}`
+/** ENV VARIABLES **/
+const dbURL = process.env.DB_URL;
+const dbPassword = process.env.DB_PASS;
+const dbUser = process.env.DB_USER;
 
-mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true});
-const db = mongoose.connection;
+/**CONNECT TO DB */
+const atlasURI = `mongodb+srv://${dbUser}:${dbPassword}@${dbURL}`;
+mongoose.connect(atlasURI, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+});
 
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('connected to DB')
+mongoose.connection.on("error", console.error);
+mongoose.connection.on("open", function () {
+    console.log("Database connection established...");
 });
 
 app.use(logger('dev'));
