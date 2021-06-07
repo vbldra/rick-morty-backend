@@ -1,30 +1,40 @@
-const { getFiveRandomCharacters, getAllCharacters } = require('../dataSources/characters')
-const User = require('../models/User')
+const {
+    getFiveRandomCharacters,
+    getAllCharacters,
+} = require("../dataSources/characters");
+const User = require("../models/User");
 
 exports.getCharacters = (req, res) => {
-    res.json(getFiveRandomCharacters())
-}
+    res.json(getFiveRandomCharacters());
+};
 
 exports.collectCharacter = async (req, res) => {
-    const data = req.body
-    const userId = '60bde70b21f9591321a59736'
+    const data = req.body;
+    const userId = "60be2a01500541f4e2d91155";
 
     try {
-        const result = await User.findByIdAndUpdate(userId, { $push: { characters: data.character } }, {new: true})
-        console.log("user", result)
+        const result = await User.findByIdAndUpdate(
+            userId,
+            { $push: { characters: data.character } },
+            { new: true }
+        );
+        console.log("user", result);
+        res.json({ collected: result.characters });
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
-    
-    res.json({collected: data.character})
-}
+};
 
 exports.getCollection = async (req, res) => {
-    const userId = '60bde70b21f9591321a59736'
+    const userId = "60be2a01500541f4e2d91155";
 
-    const user = await User.findById(userId)
-
-    const collection = getAllCharacters().filter(item => user.characters.includes(item.id))
-
-    res.json(collection)
-}
+    try {
+        const user = await User.findById(userId);
+        const collection = getAllCharacters().filter((item) =>
+            user.characters.includes(item.id)
+        );
+        res.json(collection);
+    } catch (error) {
+        console.error(error);
+    }
+};
